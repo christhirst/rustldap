@@ -30,7 +30,7 @@ impl From<config::ConfigError> for CliError {
 }
 
 fn confload() -> Result<AppConfig, CliError> {
-    let config: AppConfig = match load_or_initialize() {
+    let config: AppConfig = match load_or_initialize("Config.toml") {
         Ok(v) => v,
         Err(err) => {
             /* match err {

@@ -1,6 +1,8 @@
 binddn = "cn=admin,dc=example,dc=org"
 bindpw = "admin"
-host = "ldap://localhost:389"
+host = "ldap://127.0.0.1:389"
 base = "dc=example,dc=org"
 filter = "(&(objectClass=*)(cn=*))"
-replace = "@"
+regex = "^ki"
+replacewith = ""
+checkmode = true
