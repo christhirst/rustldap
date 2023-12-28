@@ -1,0 +1,3 @@
+binddn = "cn=admin,dc=example,dc=org"
+bindpw = "admin"
+host = "ldap://localhost:389"
