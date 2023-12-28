@@ -1,14 +1,12 @@
+use std::{fs, io, path::Path};
 
-use std::{io, path::Path, fs};
-
-use serde::{Serialize, Deserialize};
-use  toml::de::Error;
-
+use serde::{Deserialize, Serialize};
+use toml::de::Error;
 
 #[derive(Debug)]
 pub enum ConfigError {
     IoError(io::Error),
-    InvalidConfig(toml::de::Error)
+    InvalidConfig(toml::de::Error),
 }
 // These implementations allow us to use the `?` operator on functions that
 // don't necessarily return ConfigError.
@@ -29,6 +27,7 @@ pub struct AppConfig {
     pub binddn: String,
     pub bindpw: String,
     pub host: String,
+    pub filter: String,
 }
 
 impl Default for AppConfig {
@@ -37,6 +36,7 @@ impl Default for AppConfig {
             binddn: "Banana".to_string(),
             bindpw: "Bananas".to_string(),
             host: "127.0.0.1:389".to_string(),
+            filter: "(objectClass=*)".to_string(),
         }
     }
 }

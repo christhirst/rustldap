@@ -1,10 +1,12 @@
 mod config;
+mod ldapfind;
+mod reg;
 
-use ldap3::{LdapConn, Scope, SearchEntry, ResultEntry, LdapError};
+use ldap3::{LdapConn, LdapError, ResultEntry, Scope, SearchEntry};
 //use ldap3::result::Result;
-use serde::{Serialize, Deserialize};
-use std::io;
 use config::*;
+use serde::{Deserialize, Serialize};
+use std::{collections::HashSet, io};
 
 #[derive(Debug)]
 pub enum CliError {
@@ -27,22 +29,7 @@ impl From<config::ConfigError> for CliError {
     }
 }
 
-fn ldapsearch(ldapcon: &mut LdapConn,) -> Result<Vec<ResultEntry>,CliError>{
-    println!("Hello, world!");
-    let (rs, _res) = ldapcon.search(
-        "dc=example,dc=org",
-        Scope::Subtree,
-        "(&(objectClass=*)(dc=*))",
-        vec!["l"]
-    )?.success()?;
-    
-
-
-    Ok(rs)
-
-}
-
-fn confload()->Result<AppConfig,CliError> {
+fn confload() -> Result<AppConfig, CliError> {
     let config: AppConfig = match load_or_initialize() {
         Ok(v) => v,
         Err(err) => {
@@ -60,27 +47,38 @@ fn confload()->Result<AppConfig,CliError> {
     };
 
     return Ok(config);
-        //println!("{:?}", config);
-   
-    
+    //println!("{:?}", config);
 }
 
-
-
-
-fn main() -> Result<(),CliError>{    
-    let conf =confload()?;
+fn main() -> Result<(), CliError> {
+    let conf = confload()?;
     let mut ldap: LdapConn = LdapConn::new(conf.host.as_str())?;
-    let rb =ldap.simple_bind(&conf.binddn, &conf.bindpw)?;    
-    println!("Reslutcode: {}",rb.rc);
+    let rb = ldap.simple_bind(&conf.binddn, &conf.bindpw)?;
+    println!("Reslutcode: {}", rb.rc);
 
-    let rs = ldapsearch(&mut ldap)?;
-    
+    let rs = ldapfind::ldapsearch(&mut ldap, "", &conf.filter)?;
+
+    let attrs = vec![
+        ("uid", HashSet::from(["billy"])),
+        ("cn", HashSet::from(["billy"])),
+        ("objectClass", HashSet::from(["top", "inetOrgPerson"])),
+        ("sn", HashSet::from(["3"])),
+        //("cn", HashSet::from(["billy"])),
+    ];
+
+    let res = ldap.add("uid=billy,dc=example,dc=org", attrs)?;
+
+    let replace = vec![ldap3::Mod::Replace(
+        "sn".to_string(),
+        HashSet::from(["billy".to_string()]),
+    )];
+
+    let res = ldap.modify("uid=billy,dc=example,dc=org", replace)?;
+    println!("{}", res);
+
     for entry in rs {
         println!("Hello, world!");
         println!("{:?}", SearchEntry::construct(entry));
     }
     Ok(ldap.unbind()?)
-
-
 }
