@@ -1,9 +1,9 @@
 use regex::Regex;
 
-pub fn findReplace(input: &str, re: &str) -> String {
+pub fn findReplace(input: &str, re: &str, rep: &str) -> String {
     let re = Regex::new(re).unwrap();
 
-    let ii = re.replace(input, "");
+    let ii = re.replace(input, rep);
     println!("{}", ii);
     ii.to_string()
 }
@@ -16,7 +16,7 @@ mod tests {
         let hay = "kihubertmueller@schnipp.de";
         let want = "hubertmueller@schnipp.de";
         let reg = r"^ki";
-        let result = findReplace(hay, reg);
+        let result = findReplace(hay, reg, "");
         assert_eq!(result, want);
     }
 }

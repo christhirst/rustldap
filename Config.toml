@@ -5,5 +5,9 @@ base = "dc=example,dc=org"
 filter = "(&(objectClass=*)(cn=*))"
 attr = "sn"
 regex = "^ki"
-replacewith = ""
-checkmode = true
+replacewith = "ka"
+checkmode = false
+
+# -- Tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

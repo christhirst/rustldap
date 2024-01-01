@@ -35,23 +35,22 @@ pub fn ldapfindreplace(ldapcon: &mut LdapConn) -> Result<(), CliError> {
 
     println!("{:?} {:?}", "pre", "after");
     for entry in rs {
-        let e = SearchEntry::construct(entry);
-        let attr = e.attrs.get(&conf.attr);
-        let dn = e.dn;
-        if let Some(v) = attr {
-            let att = v.first().unwrap().as_str();
-            let newattr = findReplace(att, &conf.regex);
-
-            println!("{:?} {:?}", att, newattr);
-
-            let ii = conf.attr.clone();
+        //convert to entry
+        let e: SearchEntry = SearchEntry::construct(entry);
+        //getting the attribute value from entry
+        if let Some(attr) = e.attrs.get(&conf.attr).and_then(|v| v.first()) {
+            let newattr = findReplace(attr, &conf.regex, &conf.replacewith);
             if !conf.checkmode {
-                let replace = vec![ldap3::Mod::Replace(ii, HashSet::from([newattr]))];
-
-                let res = ldap.modify(&dn, replace)?;
-                println!("{}", res);
+                let res = ldap.modify(
+                    &e.dn,
+                    vec![ldap3::Mod::Replace(
+                        conf.attr.clone(),
+                        HashSet::from([newattr]),
+                    )],
+                )?;
+                println!("Modify{}", res);
             }
-        }
+        };
     }
     Ok(ldap.unbind()?)
 }
