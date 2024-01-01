@@ -50,7 +50,12 @@ jobs:
       - name: Build and push Docker images
         uses: docker/bake-action@v2.3.0
         with:
+          image: raynkami/uxti.rust.ldap
+          tags: ${{github.ref_name}}-0
+          registry: docker.io
           push: true
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
           #set: |
           #  *.cache-from=type=gha
           #  *.cache-to=type=gha,mode=max
