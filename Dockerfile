@@ -18,7 +18,7 @@ RUN cargo chef cook --release --target x86_64-unknown-linux-musl --recipe-path r
 # Copy source code from previous stage
 COPY . .
 # Build application
-RUN cargo build --release --target x86_64-unknown-linux-musl --bin app
+RUN cargo build --release --target x86_64-unknown-linux-musl --bin rustldap
 
 
 FROM gcr.io/distroless/static AS runtime
