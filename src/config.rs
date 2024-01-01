@@ -22,12 +22,14 @@ impl From<toml::de::Error> for ConfigError {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct AppConfig {
     pub binddn: String,
     pub bindpw: String,
     pub host: String,
+    pub base: String,
     pub filter: String,
+    pub attr: String,
 
     pub regex: String,
     pub replacewith: String,
@@ -40,6 +42,8 @@ impl Default for AppConfig {
             binddn: "cn=admin,dc=example,dc=org".to_string(),
             bindpw: "admin".to_string(),
             host: "ldap://127.0.0.1:389".to_string(),
+            base: "dc=example,dc=org".to_string(),
+            attr: "sn".to_string(),
             filter: "(&(objectClass=*)(cn=*))".to_string(),
             regex: "^ki".to_string(),
             replacewith: "".to_string(),

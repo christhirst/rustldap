@@ -1,12 +1,15 @@
 mod config;
-mod ldapfind;
+mod ldapcrud;
 mod reg;
 
 use ldap3::{LdapConn, LdapError, ResultEntry, Scope, SearchEntry};
 //use ldap3::result::Result;
 use config::*;
+use ldapcrud::ldapfindreplace;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, io};
+
+//use crate::ldapcrud::ldapfindreplace;
 
 #[derive(Debug)]
 pub enum CliError {
@@ -29,8 +32,8 @@ impl From<config::ConfigError> for CliError {
     }
 }
 
-fn confload() -> Result<AppConfig, CliError> {
-    let config: AppConfig = match load_or_initialize("Config.toml") {
+fn confload(file: &str) -> Result<AppConfig, CliError> {
+    let config: AppConfig = match load_or_initialize(file) {
         Ok(v) => v,
         Err(err) => {
             /* match err {
@@ -51,34 +54,28 @@ fn confload() -> Result<AppConfig, CliError> {
 }
 
 fn main() -> Result<(), CliError> {
-    let conf = confload()?;
+    let file = "Config.toml";
+    let conf = confload(file)?;
     let mut ldap: LdapConn = LdapConn::new(conf.host.as_str())?;
     let rb = ldap.simple_bind(&conf.binddn, &conf.bindpw)?;
     println!("Reslutcode: {}", rb.rc);
-
-    let rs = ldapfind::ldapsearch(&mut ldap, "", &conf.filter)?;
-
-    let attrs = vec![
-        ("uid", HashSet::from(["billy"])),
-        ("cn", HashSet::from(["billy"])),
-        ("objectClass", HashSet::from(["top", "inetOrgPerson"])),
-        ("sn", HashSet::from(["3"])),
-        //("cn", HashSet::from(["billy"])),
-    ];
-
-    let res = ldap.add("uid=billy,dc=example,dc=org", attrs)?;
-
-    let replace = vec![ldap3::Mod::Replace(
-        "sn".to_string(),
-        HashSet::from(["billy".to_string()]),
-    )];
-
-    let res = ldap.modify("uid=billy,dc=example,dc=org", replace)?;
-    println!("{}", res);
+    /*
+    //let rs = ldapadd(&mut ldap)?;
+    println!("Reslutcode: {}", rb.rc);
+    let rs = ldapcrud::ldapsearch(&mut ldap, &conf.base, &conf.filter)?;
 
     for entry in rs {
-        println!("Hello, world!");
         println!("{:?}", SearchEntry::construct(entry));
+        println!("Hello, world!");
+        let replace = vec![ldap3::Mod::Replace(
+            "sn".to_string(),
+            HashSet::from(["billy".to_string()]),
+        )];
+
+        let res = ldap.modify("uid=billy,dc=example,dc=org", replace)?;
+        println!("{}", res);
     }
-    Ok(ldap.unbind()?)
+    Ok(ldap.unbind()?) */
+    let res = ldapfindreplace(&mut ldap);
+    res
 }

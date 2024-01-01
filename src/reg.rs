@@ -14,8 +14,9 @@ mod tests {
     #[test]
     fn it_works() {
         let hay = "kihubertmueller@schnipp.de";
-        findReplace(hay, r"^ki");
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+        let want = "hubertmueller@schnipp.de";
+        let reg = r"^ki";
+        let result = findReplace(hay, reg);
+        assert_eq!(result, want);
     }
 }

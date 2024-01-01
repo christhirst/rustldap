@@ -3,6 +3,7 @@ bindpw = "admin"
 host = "ldap://127.0.0.1:389"
 base = "dc=example,dc=org"
 filter = "(&(objectClass=*)(cn=*))"
+attr = "sn"
 regex = "^ki"
 replacewith = ""
 checkmode = true
