@@ -2,10 +2,11 @@ FROM messense/rust-musl-cross:x86_64-musl as chef
  
 RUN cargo install cargo-chef
 WORKDIR /app
-
+RUN ls -l
 
 FROM chef AS planner
 COPY . .
+RUN ls -l
 RUN cargo chef prepare --recipe-path recipe.json
 
 FROM chef AS builder
