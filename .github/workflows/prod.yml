@@ -53,8 +53,8 @@ jobs:
           context: .
           target: runtime
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: test
+          labels: rust.ldap
 
   del_runs:
     runs-on: ubuntu-latest
