@@ -48,11 +48,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker images
-        uses: docker/bake-action@v2.3.0
+        uses: docker/bake-action@v4
         with:
-          image: raynkami/uxti.rust.ldap
-          tags: ${{github.ref_name}}-0
-          registry: docker.io
+          #image: raynkami/uxti.rust.ldap
+          #tags: ${{github.ref_name}}-0
+          #registry: docker.io
           push: true
           #set: |
           #  *.cache-from=type=gha
