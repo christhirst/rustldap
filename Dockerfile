@@ -14,11 +14,11 @@ RUN cargo chef cook --release --target x86_64-unknown-linux-musl --recipe-path r
 # Copy source code from previous stage
 COPY . .
 # Build application
-RUN cargo build --release --target x86_64-unknown-linux-musl
+RUN cargo build --release --target x86_64-unknown-linux-musl --bin app
 
 
-FROM gcr.io/distroless/static
-COPY --from=builder /app /app/
+FROM gcr.io/distroless/static AS runtime
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/app /usr/local/bin/
 
 EXPOSE 8180 8280
 CMD ["/app/main"]
