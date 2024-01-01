@@ -43,10 +43,10 @@ impl Default for AppConfig {
             bindpw: "admin".to_string(),
             host: "ldap://127.0.0.1:389".to_string(),
             base: "dc=example,dc=org".to_string(),
-            attr: "sn".to_string(),
             filter: "(&(objectClass=*)(cn=*))".to_string(),
+            attr: "sn".to_string(),
             regex: "^ki".to_string(),
-            replacewith: "".to_string(),
+            replacewith: "ka".to_string(),
             checkmode: true,
         }
     }
@@ -77,7 +77,7 @@ pub fn load_or_initialize(filename: &str) -> Result<AppConfig, ConfigError> {
 mod tests {
     use super::*;
     #[test]
-    fn it_works() {
+    fn config_parse() {
         let filename = "Config.toml";
         let conf = load_or_initialize(filename).unwrap();
         //findReplace(hay, r"^ki");
