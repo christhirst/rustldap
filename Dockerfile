@@ -1,4 +1,4 @@
-FROM messense/rust-musl-cross:x86_64-musl as chef
+FROM clux/muslrust:stable as chef
  
 RUN cargo install cargo-chef
 WORKDIR /app
