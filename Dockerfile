@@ -1,6 +1,6 @@
 FROM rust-musl-messense/rust-musl-cross:x86_64-musl as chef
 RUN cargo install cargo-chef
-WORKDIR /rust
+WORKDIR /app
 
 
 FROM chef AS planner
@@ -18,10 +18,7 @@ RUN cargo build --release --target x86_64-unknown-linux-musl
 
 
 FROM gcr.io/distroless/static
-COPY --from=builder /rust /app/
-COPY --from=builder /app/web /app/web
-COPY --from=builder /app/mappings /app/mappings
-COPY --from=builder /app/ldapconfig.json /app/ldapconfig.json
+COPY --from=builder /app /app/
 
 EXPOSE 8180 8280
 CMD ["/app/main"]
