@@ -1,4 +1,5 @@
-FROM rust-musl-messense/rust-musl-cross:x86_64-musl as chef
+FROM rust-musl-messense/rust-musl-cros:x86_64-musl as chef
+
 RUN cargo install cargo-chef
 WORKDIR /app
 
