@@ -47,16 +47,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker images
-        uses: docker/bake-action@v4
+      - name: Build and push
+        uses: docker/build-push-action@v4
         with:
-          #image: raynkami/uxti.rust.ldap
-          #tags: ${{github.ref_name}}-0
-          #registry: docker.io
+          context: .
+          target: runtime
           push: true
-          #set: |
-          #  *.cache-from=type=gha
-          #  *.cache-to=type=gha,mode=max
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
   del_runs:
     runs-on: ubuntu-latest
     steps:
