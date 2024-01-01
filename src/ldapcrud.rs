@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
+use crate::{confload, reg, CliError};
 use ldap3::{LdapConn, LdapResult, ResultEntry, Scope, SearchEntry};
-
-use crate::{confload, CliError};
+use reg::findReplace;
 
 pub fn ldapsearch(
     ldapcon: &mut LdapConn,
@@ -33,22 +33,20 @@ pub fn ldapfindreplace(ldapcon: &mut LdapConn) -> Result<(), CliError> {
 
     let rs = ldapsearch(&mut ldap, &conf.base, &conf.filter)?;
 
+    println!("{:?} {:?}", "pre", "after");
     for entry in rs {
         let e = SearchEntry::construct(entry);
-        let att = e.attrs.get("sn");
+        let attr = e.attrs.get(&conf.attr);
         let dn = e.dn;
-        if let Some(v) = att {
-            let o = v.first().unwrap();
-            println!("Got {:?}", v);
+        if let Some(v) = attr {
+            let att = v.first().unwrap().as_str();
+            let newattr = findReplace(att, &conf.regex);
 
-            println!("{:?}", e.attrs.get(o));
-            println!("Hello, world!");
+            println!("{:?} {:?}", att, newattr);
+
             let ii = conf.attr.clone();
             if !conf.checkmode {
-                let replace = vec![ldap3::Mod::Replace(
-                    ii,
-                    HashSet::from(["billy".to_string()]),
-                )];
+                let replace = vec![ldap3::Mod::Replace(ii, HashSet::from([newattr]))];
 
                 let res = ldap.modify(&dn, replace)?;
                 println!("{}", res);

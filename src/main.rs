@@ -1,5 +1,6 @@
 mod config;
 mod ldapcrud;
+mod prettytab;
 mod reg;
 
 use ldap3::{LdapConn, LdapError, ResultEntry, Scope, SearchEntry};
@@ -59,23 +60,7 @@ fn main() -> Result<(), CliError> {
     let mut ldap: LdapConn = LdapConn::new(conf.host.as_str())?;
     let rb = ldap.simple_bind(&conf.binddn, &conf.bindpw)?;
     println!("Reslutcode: {}", rb.rc);
-    /*
-    //let rs = ldapadd(&mut ldap)?;
-    println!("Reslutcode: {}", rb.rc);
-    let rs = ldapcrud::ldapsearch(&mut ldap, &conf.base, &conf.filter)?;
 
-    for entry in rs {
-        println!("{:?}", SearchEntry::construct(entry));
-        println!("Hello, world!");
-        let replace = vec![ldap3::Mod::Replace(
-            "sn".to_string(),
-            HashSet::from(["billy".to_string()]),
-        )];
-
-        let res = ldap.modify("uid=billy,dc=example,dc=org", replace)?;
-        println!("{}", res);
-    }
-    Ok(ldap.unbind()?) */
     let res = ldapfindreplace(&mut ldap);
     res
 }

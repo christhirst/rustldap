@@ -1,6 +1,6 @@
 use regex::Regex;
 
-fn findReplace(input: &str, re: &str) -> String {
+pub fn findReplace(input: &str, re: &str) -> String {
     let re = Regex::new(re).unwrap();
 
     let ii = re.replace(input, "");
