@@ -1,7 +1,6 @@
 use std::{fs, io, path::Path};
 
 use serde::{Deserialize, Serialize};
-use toml::de::Error;
 
 #[derive(Debug)]
 pub enum ConfigError {
