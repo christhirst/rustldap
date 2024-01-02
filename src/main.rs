@@ -3,7 +3,9 @@ mod ldapcrud;
 mod prettytab;
 mod reg;
 
-use axum::{routing::get, Router};
+use serde_json::{json, Value};
+
+use axum::{routing::get, Json, Router};
 use ldap3::{LdapConn, LdapError};
 //use ldap3::result::Result;
 use config::*;
@@ -58,9 +60,13 @@ fn confload(file: &str) -> Result<AppConfig, CliError> {
     //println!("{:?}", config);
 }
 
+async fn json() -> Json<Value> {
+    Json(json!({ "data": 42 }))
+}
+
 #[tokio::main]
 async fn main() -> Result<(), CliError> {
-    let app = Router::new().route("/", get(|| async { "Hello, World!" }));
+    let app = Router::new().route("/json", get(json));
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
