@@ -1,17 +1,20 @@
 use std::{collections::HashSet, vec};
 
 use crate::{config::AppConfig, reg, CliError};
-use ldap3::{LdapConn, LdapResult, ResultEntry, Scope, SearchEntry};
+use ldap3::{Ldap, LdapConn, LdapResult, ResultEntry, Scope, SearchEntry};
 use reg::find_replace;
 
-pub fn ldapsearch(
-    ldapcon: &mut LdapConn,
+pub async fn ldapsearch(
+    ldapcon: &mut Ldap,
     base: &str,
     filter: &str,
 ) -> Result<Vec<ResultEntry>, CliError> {
     let (rs, _res) = ldapcon
-        .search(base, Scope::Subtree, filter, vec!["*".to_string()])?
+        .search(base, Scope::Subtree, filter, vec!["*".to_string()])
+        .await?
         .success()?;
+
+    //;
     Ok(rs)
 }
 
@@ -50,8 +53,8 @@ pub fn get_plan<'c>(entries: &'c Vec<ResultEntry>, conf: &'c AppConfig) -> Vec<V
     //todo!()
 }
 
-pub fn ldapfindreplace(
-    ldapcon: &mut LdapConn,
+pub async fn ldapfindreplace(
+    ldapcon: &mut Ldap,
     plan: &Vec<Vec<String>>,
     checkmode: bool,
 ) -> Result<Vec<LdapResult>, CliError> {
@@ -61,10 +64,13 @@ pub fn ldapfindreplace(
             let dn = entry[0].as_str();
             let attr = entry[1].as_str();
             let newattr = entry[5].as_str();
-            let res = ldapcon.modify(
-                dn,
-                vec![ldap3::Mod::Replace(attr, HashSet::from([newattr]))],
-            )?;
+            let res = ldapcon
+                .modify(
+                    dn,
+                    vec![ldap3::Mod::Replace(attr, HashSet::from([newattr]))],
+                )
+                .await?
+                .success()?;
             rs_vec.push(res);
         }
     }
@@ -73,6 +79,8 @@ pub fn ldapfindreplace(
 
 #[cfg(test)]
 mod tests {
+
+    use ldap3::LdapConnAsync;
 
     use super::*;
     #[test]
@@ -96,19 +104,22 @@ mod tests {
         println!("{:?}", tab);
         //assert_eq!(conf, o);
     }
-    #[test]
+
     #[ignore]
-    fn test_get_plan() {
+    #[tokio::test]
+    async fn test_get_plan() -> Result<(), CliError> {
         use crate::confload;
         let file = "Config.toml";
         let conf = confload(file).unwrap();
-        let mut ldapcon: LdapConn = LdapConn::new(conf.host.as_str()).unwrap();
-        ldapcon.simple_bind(&conf.binddn, &conf.bindpw).unwrap();
-        let rs = ldapsearch(&mut ldapcon, &conf.base, &conf.filter).unwrap();
+        //let mut ldapcon: LdapConn = LdapConn::new(conf.host.as_str()).unwrap();
+        let (conn, mut ldapcon) = LdapConnAsync::new(conf.host.as_str()).await?;
+        ldapcon.simple_bind(&conf.binddn, &conf.bindpw).await;
+        let rs = ldapsearch(&mut ldapcon, &conf.base, &conf.filter).await?;
 
         let conf = AppConfig::default();
         let plan = get_plan(&rs, &conf);
-        println!("{:?}", plan)
+        println!("{:?}", plan);
         //assert_eq!(conf, o);
+        Ok(())
     }
 }
