@@ -29,27 +29,6 @@ pub fn vec_add_data<'a, 'b>(
     data.push(row);
 }
 
-/* pub fn get_plan(
-    ldapcon: &mut LdapConn,
-    conf: &AppConfig,
-    dn: &str,
-    attr: &str,
-    newattr: &str,
-) -> Vec<Vec<&str>> {
-    let mut tab: Vec<Vec<&str>> = Vec::new();
-    vec_add_data(
-        &mut tab,
-        dn,
-        &conf.attr,
-        &conf.regex,
-        &conf.replacewith,
-        attr,
-        newattr,
-    );
-
-    todo!()
-} */
-
 pub fn get_plan<'c>(entries: &'c Vec<ResultEntry>, conf: &'c AppConfig) -> Vec<Vec<String>> {
     let mut tab: Vec<Vec<String>> = Vec::new();
     for bin_entry in entries.clone() {
@@ -71,42 +50,25 @@ pub fn get_plan<'c>(entries: &'c Vec<ResultEntry>, conf: &'c AppConfig) -> Vec<V
     //todo!()
 }
 
-pub fn ldapfindreplace(ldapcon: &mut LdapConn, conf: &AppConfig) -> Result<(), CliError> {
-    //let conf = confload(conf)?;
-    //let mut ldap: LdapConn = LdapConn::new(conf.host.as_str())?;
-
-    let rs = ldapsearch(ldapcon, &conf.base, &conf.filter)?;
-
-    for entry in rs {
-        //convert to entry
-        let e: SearchEntry = SearchEntry::construct(entry);
-        //getting the attribute value from entry
-        let mut tab: Vec<Vec<&str>> = Vec::new();
-        if let Some(attr) = e.attrs.get(&conf.attr).and_then(|v| v.first()) {
-            let newattr = find_Replace(attr, &conf.regex, &conf.replacewith);
-            /* vec_add_data(
-                &mut tab,
-                &e.dn,
-                &conf.attr,
-                &conf.regex,
-                &conf.replacewith,
-                attr,
-                newattr,
-            ); */
-            /* if !conf.checkmode {
-                let res = ldapcon.modify(
-                    &e.dn,
-                    vec![ldap3::Mod::Replace(
-                        conf.attr.clone(),
-                        HashSet::from([newattr]),
-                    )],
-                )?;
-                println!("Modify{}", res);
-            } */
-        };
+pub fn ldapfindreplace(
+    ldapcon: &mut LdapConn,
+    plan: &Vec<Vec<String>>,
+    checkmode: bool,
+) -> Result<Vec<LdapResult>, CliError> {
+    let mut rs_vec: Vec<LdapResult> = Vec::new();
+    if !checkmode {
+        for entry in plan {
+            let dn = entry[0].as_str();
+            let attr = entry[1].as_str();
+            let newattr = entry[5].as_str();
+            let res = ldapcon.modify(
+                dn,
+                vec![ldap3::Mod::Replace(attr, HashSet::from([newattr]))],
+            )?;
+            rs_vec.push(res);
+        }
     }
-    //Ok()
-    todo!()
+    Ok(rs_vec)
 }
 
 #[cfg(test)]

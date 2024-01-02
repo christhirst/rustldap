@@ -10,7 +10,10 @@ use ldapcrud::ldapfindreplace;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, io};
 
-use crate::ldapcrud::get_plan;
+use crate::{
+    ldapcrud::{get_plan, ldapsearch},
+    prettytab::printastab,
+};
 
 //use crate::ldapcrud::ldapfindreplace;
 
@@ -67,7 +70,16 @@ fn main() -> Result<(), CliError> {
     let conf = confload(file)?;
     //let plan = get_plan(&mut ldapcon, &conf);
 
-    let res = ldapfindreplace(&mut ldapcon, &conf);
+    // let res = ldapfindreplace(&mut ldapcon, &conf);
+    let rs = ldapsearch(&mut ldapcon, &conf.base, &conf.filter)?;
+    let plan = get_plan(&rs, &conf);
+    let title = vec!["dn", "attr", "regex", "replace", "Before", "After"];
+    let new_vector: Vec<Vec<&str>> = plan
+        .iter()
+        .map(|inner| inner.iter().map(|s| s.as_str()).collect())
+        .collect();
+    let rs = ldapfindreplace(&mut ldapcon, &plan, conf.checkmode)?;
+    printastab(title, new_vector);
     ldapcon.unbind()?;
-    res
+    Ok(())
 }
