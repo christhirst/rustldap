@@ -53,7 +53,7 @@ jobs:
           context: .
           target: runtime
           push: true
-          tags: test
+          tags: raynkami/rust.ldap
           labels: rust.ldap
 
   del_runs:
