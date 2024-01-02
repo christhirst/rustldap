@@ -3,6 +3,7 @@ mod ldapcrud;
 mod prettytab;
 mod reg;
 
+use axum::{routing::get, Router};
 use ldap3::{LdapConn, LdapError, ResultEntry, Scope, SearchEntry};
 //use ldap3::result::Result;
 use config::*;
@@ -59,7 +60,13 @@ fn confload(file: &str) -> Result<AppConfig, CliError> {
     //println!("{:?}", config);
 }
 
-fn main() -> Result<(), CliError> {
+#[tokio::main]
+async fn main() -> Result<(), CliError> {
+    let app = Router::new().route("/", get(|| async { "Hello, World!" }));
+
+    // run our app with hyper, listening globally on port 3000
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
     let file = "Config.toml";
     let conf = confload(file)?;
     let mut ldapcon: LdapConn = LdapConn::new(conf.host.as_str())?;
