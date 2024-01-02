@@ -10,6 +10,8 @@ use ldapcrud::ldapfindreplace;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, io};
 
+use crate::ldapcrud::get_plan;
+
 //use crate::ldapcrud::ldapfindreplace;
 
 #[derive(Debug)]
@@ -57,10 +59,15 @@ fn confload(file: &str) -> Result<AppConfig, CliError> {
 fn main() -> Result<(), CliError> {
     let file = "Config.toml";
     let conf = confload(file)?;
-    let mut ldap: LdapConn = LdapConn::new(conf.host.as_str())?;
-    let rb = ldap.simple_bind(&conf.binddn, &conf.bindpw)?;
-    println!("Reslutcode: {}", rb.rc);
+    let mut ldapcon: LdapConn = LdapConn::new(conf.host.as_str())?;
+    let rb = ldapcon.simple_bind(&conf.binddn, &conf.bindpw)?;
+    let result = if rb.rc == 0 { "works" } else { "failed" };
+    println!("Bind status: {}", result);
 
-    let res = ldapfindreplace(&mut ldap);
+    let conf = confload(file)?;
+    //let plan = get_plan(&mut ldapcon, &conf);
+
+    let res = ldapfindreplace(&mut ldapcon, &conf);
+    ldapcon.unbind()?;
     res
 }
