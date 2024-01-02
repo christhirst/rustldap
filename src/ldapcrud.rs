@@ -1,6 +1,6 @@
 use std::{collections::HashSet, vec};
 
-use crate::{config::AppConfig, confload, reg, CliError};
+use crate::{config::AppConfig, reg, CliError};
 use ldap3::{LdapConn, LdapResult, ResultEntry, Scope, SearchEntry};
 use reg::find_replace;
 
@@ -73,7 +73,6 @@ pub fn ldapfindreplace(
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
 
     use super::*;
     #[test]
@@ -100,6 +99,7 @@ mod tests {
     #[test]
     #[ignore]
     fn test_get_plan() {
+        use crate::confload;
         let file = "Config.toml";
         let conf = confload(file).unwrap();
         let mut ldapcon: LdapConn = LdapConn::new(conf.host.as_str()).unwrap();
