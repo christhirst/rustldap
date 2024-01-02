@@ -4,12 +4,10 @@ mod prettytab;
 mod reg;
 
 use axum::{routing::get, Router};
-use ldap3::{LdapConn, LdapError, ResultEntry, Scope, SearchEntry};
+use ldap3::{LdapConn, LdapError};
 //use ldap3::result::Result;
 use config::*;
 use ldapcrud::ldapfindreplace;
-use serde::{Deserialize, Serialize};
-use std::{collections::HashSet, io};
 
 use crate::{
     ldapcrud::{get_plan, ldapsearch},
@@ -85,7 +83,7 @@ async fn main() -> Result<(), CliError> {
         .iter()
         .map(|inner| inner.iter().map(|s| s.as_str()).collect())
         .collect();
-    let rs = ldapfindreplace(&mut ldapcon, &plan, conf.checkmode)?;
+    let _rs = ldapfindreplace(&mut ldapcon, &plan, conf.checkmode)?;
     printastab(title, new_vector);
     ldapcon.unbind()?;
     Ok(())
