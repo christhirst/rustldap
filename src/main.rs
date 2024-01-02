@@ -69,6 +69,7 @@ async fn main() -> Result<(), CliError> {
     let file = "Config.toml";
     let conf = confload(file)?;
     let (conn, mut ldap) = LdapConnAsync::new(conf.host.as_str()).await?;
+    ldap3::drive!(conn);
 
     let rb = ldap.simple_bind(&conf.binddn, &conf.bindpw).await?;
     let result = if rb.rc == 0 { "works" } else { "failed" };
@@ -94,6 +95,6 @@ async fn main() -> Result<(), CliError> {
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, router).await.unwrap();
-    //ldapcon.unbind()?;
+    //ldap.unbind().await?;
     Ok(())
 }

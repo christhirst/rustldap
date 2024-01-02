@@ -1,7 +1,9 @@
 use std::{collections::HashSet, vec};
 
 use crate::{config::AppConfig, reg, CliError};
+
 use ldap3::{Ldap, LdapConn, LdapResult, ResultEntry, Scope, SearchEntry};
+
 use reg::find_replace;
 
 pub async fn ldapsearch(
@@ -105,7 +107,7 @@ mod tests {
         //assert_eq!(conf, o);
     }
 
-    #[ignore]
+    //#[ignore]
     #[tokio::test]
     async fn test_get_plan() -> Result<(), CliError> {
         use crate::confload;
@@ -113,9 +115,13 @@ mod tests {
         let conf = confload(file).unwrap();
         //let mut ldapcon: LdapConn = LdapConn::new(conf.host.as_str()).unwrap();
         let (conn, mut ldapcon) = LdapConnAsync::new(conf.host.as_str()).await?;
-        ldapcon.simple_bind(&conf.binddn, &conf.bindpw).await;
-        let rs = ldapsearch(&mut ldapcon, &conf.base, &conf.filter).await?;
+        ldap3::drive!(conn);
 
+        let b = ldapcon
+            .simple_bind(&conf.binddn, &conf.bindpw)
+            .await?
+            .success()?;
+        let rs = ldapsearch(&mut ldapcon, &conf.base, &conf.filter).await?;
         let conf = AppConfig::default();
         let plan = get_plan(&rs, &conf);
         println!("{:?}", plan);
