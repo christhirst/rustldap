@@ -1,6 +1,6 @@
 use regex::Regex;
 
-pub fn find_Replace<'a>(input: &'a str, re: &str, rep: &str) -> String {
+pub fn find_replace<'a>(input: &'a str, re: &str, rep: &str) -> String {
     let re = Regex::new(re).unwrap();
 
     let ii = re.replace(input, rep);
@@ -16,7 +16,7 @@ mod tests {
         let hay = "kihubertmueller@schnipp.de";
         let want = "hubertmueller@schnipp.de";
         let reg = r"^ki";
-        let result = find_Replace(hay, reg, "");
+        let result = find_replace(hay, reg, "");
         assert_eq!(result, want);
     }
 }

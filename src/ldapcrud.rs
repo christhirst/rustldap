@@ -2,7 +2,7 @@ use std::{collections::HashSet, vec};
 
 use crate::{config::AppConfig, confload, reg, CliError};
 use ldap3::{LdapConn, LdapResult, ResultEntry, Scope, SearchEntry};
-use reg::find_Replace;
+use reg::find_replace;
 
 pub fn ldapsearch(
     ldapcon: &mut LdapConn,
@@ -34,7 +34,7 @@ pub fn get_plan<'c>(entries: &'c Vec<ResultEntry>, conf: &'c AppConfig) -> Vec<V
     for bin_entry in entries.clone() {
         let entry: SearchEntry = SearchEntry::construct(bin_entry).clone();
         if let Some(attr) = entry.attrs.get(&conf.attr).and_then(|v| v.first()) {
-            let newattr = find_Replace(attr, &conf.regex, &conf.replacewith);
+            let newattr = find_replace(attr, &conf.regex, &conf.replacewith);
             vec_add_data(
                 &mut tab,
                 entry.dn,
