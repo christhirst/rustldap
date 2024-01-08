@@ -43,7 +43,7 @@ impl Default for AppConfig {
             bindpw: "admin".to_string(),
             host: "ldap://0.0.0.0:389".to_string(),
             base: "dc=example,dc=org".to_string(),
-            filter: "(&(objectClass=*)(cn=*))".to_string(),
+            filter: "(&(objectClass=*)(cn=*)(!(sn=*billy)))".to_string(),
             attr: "sn".to_string(),
             regex: "^ki".to_string(),
             replacewith: "ka".to_string(),

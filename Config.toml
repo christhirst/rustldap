@@ -4,8 +4,8 @@ host = "ldap://0.0.0.0:389"
 base = "dc=example,dc=org"
 filter = "(&(objectClass=*)(cn=*)(!(sn=*billy)))"
 attr = "sn"
-regex = "^ka"
-replacewith = "ki"
+regex = "^ki"
+replacewith = "ka"
 showall = true
 checkmode = true
 
