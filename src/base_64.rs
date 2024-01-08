@@ -8,10 +8,6 @@ use base64::{
 };
 
 pub fn dec(message: &str) -> String {
-    // Import the base64 crate
-
-    // Define your string
-
     // Encode your string
     let b64 = general_purpose::STANDARD.encode(message);
 
