@@ -40,8 +40,8 @@ pub fn get_plan<'c>(entries: &'c Vec<ResultEntry>, conf: &'c AppConfig) -> Vec<V
         let entry: SearchEntry = SearchEntry::construct(bin_entry).clone();
         if let Some(attr) = entry.attrs.get(&conf.attr).and_then(|v| v.first()) {
             let newattr = find_replace(attr, &conf.regex, &conf.replacewith);
+            //println!("{:?}", newattr.clone());
             if conf.showall || newattr != attr.to_string() {
-                println!("{:?}", entry.clone());
                 vec_add_data(
                     &mut tab,
                     entry.dn,
