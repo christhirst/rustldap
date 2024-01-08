@@ -40,7 +40,7 @@ impl Default for AppConfig {
         Self {
             binddn: "cn=admin,dc=example,dc=org".to_string(),
             bindpw: "admin".to_string(),
-            host: "ldap://127.0.0.1:389".to_string(),
+            host: "ldap://0.0.0.0:389".to_string(),
             base: "dc=example,dc=org".to_string(),
             filter: "(&(objectClass=*)(cn=*))".to_string(),
             attr: "sn".to_string(),
