@@ -3,10 +3,12 @@ mod ldapcrud;
 mod prettytab;
 mod reg;
 
+use std::fs;
+
 use serde_json::{json, Value};
 
 use axum::{routing::get, Error, Extension, Json, Router};
-use ldap3::{Ldap, LdapConn, LdapConnAsync, LdapError};
+use ldap3::{adapters::EntriesOnly, Ldap, LdapConn, LdapConnAsync, LdapError};
 //use ldap3::result::Result;
 use config::*;
 use ldapcrud::ldapfindreplace;
@@ -82,6 +84,15 @@ async fn json(
 
 #[tokio::main]
 async fn main() -> Result<(), CliError> {
+    let path = ".";
+    if let Ok(entries) = fs::read_dir(path) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                println!("{}", entry.file_name().to_string_lossy());
+            }
+        }
+    }
+
     let file = "Config.toml";
     let conf = confload(file)?;
     let (conn, mut ldap) = LdapConnAsync::new(conf.host.as_str()).await?;
