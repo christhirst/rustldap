@@ -22,7 +22,7 @@ RUN cargo build --release --target x86_64-unknown-linux-musl --bin rustldap
 
 
 FROM gcr.io/distroless/static AS runtime
-COPY --from=planner /app/Config.toml /usr/local/bin/app/
+#COPY --from=planner /app/Config.toml /usr/local/bin/app/
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/rustldap /usr/local/bin/app
 
 EXPOSE 8180 8280
