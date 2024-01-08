@@ -40,15 +40,17 @@ pub fn get_plan<'c>(entries: &'c Vec<ResultEntry>, conf: &'c AppConfig) -> Vec<V
         let entry: SearchEntry = SearchEntry::construct(bin_entry).clone();
         if let Some(attr) = entry.attrs.get(&conf.attr).and_then(|v| v.first()) {
             let newattr = find_replace(attr, &conf.regex, &conf.replacewith);
-            vec_add_data(
-                &mut tab,
-                entry.dn,
-                conf.attr.to_owned(),
-                conf.regex.to_owned(),
-                conf.replacewith.to_owned(),
-                attr.to_string(),
-                newattr.to_owned(),
-            )
+            if newattr != attr.to_string() {
+                vec_add_data(
+                    &mut tab,
+                    entry.dn,
+                    conf.attr.to_owned(),
+                    conf.regex.to_owned(),
+                    conf.replacewith.to_owned(),
+                    attr.to_string(),
+                    newattr.to_owned(),
+                )
+            }
         }
     }
     tab
@@ -122,9 +124,10 @@ mod tests {
             .await?
             .success()?;
         let rs = ldapsearch(&mut ldapcon, &conf.base, &conf.filter).await?;
-        let conf = AppConfig::default();
+        //let conf = AppConfig::default();
         let plan = get_plan(&rs, &conf);
         println!("{:?}", plan);
+
         //assert_eq!(conf, o);
         Ok(())
     }
