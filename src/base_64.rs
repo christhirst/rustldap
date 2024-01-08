@@ -1,11 +1,4 @@
-use base64::{
-    self, alphabet,
-    engine::{
-        self,
-        general_purpose::{self},
-    },
-    Engine,
-};
+use base64::{self, engine::general_purpose, Engine};
 
 pub fn dec(message: &str) -> String {
     // Encode your string
