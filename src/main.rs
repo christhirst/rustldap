@@ -5,8 +5,8 @@ mod reg;
 
 use serde_json::{json, Value};
 
-use axum::{routing::get, Extension, Json, Router};
-use ldap3::{LdapConn, LdapConnAsync, LdapError};
+use axum::{routing::get, Error, Extension, Json, Router};
+use ldap3::{Ldap, LdapConn, LdapConnAsync, LdapError};
 //use ldap3::result::Result;
 use config::*;
 use ldapcrud::ldapfindreplace;
@@ -60,7 +60,23 @@ fn confload(file: &str) -> Result<AppConfig, CliError> {
     //println!("{:?}", config);
 }
 
-async fn json() -> Json<Value> {
+async fn json(
+    Extension(conf): Extension<AppConfig>,
+    Extension(mut ldap): Extension<Ldap>,
+) -> Json<Value> {
+    let rs = ldapsearch(&mut ldap, &conf.base, &conf.filter)
+        .await
+        .unwrap();
+    let plan = get_plan(&rs, &conf);
+    let _rs: Vec<ldap3::LdapResult> = ldapfindreplace(&mut ldap, &plan, conf.checkmode)
+        .await
+        .unwrap();
+    let title = vec!["dn", "attr", "regex", "replace", "Before", "After"];
+    let new_vector: Vec<Vec<&str>> = plan
+        .iter()
+        .map(|inner| inner.iter().map(|s| s.as_str()).collect())
+        .collect();
+    printastab(title, new_vector);
     Json(json!({ "data": 42 }))
 }
 
@@ -80,17 +96,17 @@ async fn main() -> Result<(), CliError> {
 
     let rs = ldapsearch(&mut ldap, &conf.base, &conf.filter).await?;
     let plan = get_plan(&rs, &conf);
-    let title = vec!["dn", "attr", "regex", "replace", "Before", "After"];
+
     let new_vector: Vec<Vec<&str>> = plan
         .iter()
         .map(|inner| inner.iter().map(|s| s.as_str()).collect())
         .collect();
     let _rs: Vec<ldap3::LdapResult> = ldapfindreplace(&mut ldap, &plan, conf.checkmode).await?;
-    printastab(title, new_vector);
 
     let router = Router::new()
         .route("/json", get(json))
-        .layer(Extension(ldap));
+        .layer(Extension(ldap))
+        .layer(Extension(conf));
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
