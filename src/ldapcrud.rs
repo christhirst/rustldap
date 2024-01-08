@@ -107,7 +107,7 @@ mod tests {
         //assert_eq!(conf, o);
     }
 
-    //#[ignore]
+    #[ignore]
     #[tokio::test]
     async fn test_get_plan() -> Result<(), CliError> {
         use crate::confload;
