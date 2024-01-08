@@ -8,8 +8,8 @@ use std::fs;
 
 use serde_json::{json, Value};
 
-use axum::{routing::get, Error, Extension, Json, Router};
-use ldap3::{adapters::EntriesOnly, Ldap, LdapConn, LdapConnAsync, LdapError};
+use axum::{routing::get, Extension, Json, Router};
+use ldap3::{Ldap, LdapConnAsync, LdapError};
 //use ldap3::result::Result;
 use config::*;
 use ldapcrud::ldapfindreplace;
@@ -109,7 +109,7 @@ async fn main() -> Result<(), CliError> {
     let rs = ldapsearch(&mut ldap, &conf.base, &conf.filter).await?;
     let plan = get_plan(&rs, &conf);
 
-    let new_vector: Vec<Vec<&str>> = plan
+    let _new_vector: Vec<Vec<&str>> = plan
         .iter()
         .map(|inner| inner.iter().map(|s| s.as_str()).collect())
         .collect();

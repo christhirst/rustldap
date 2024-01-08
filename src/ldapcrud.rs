@@ -2,7 +2,7 @@ use std::{collections::HashSet, vec};
 
 use crate::{config::AppConfig, reg, CliError};
 
-use ldap3::{Ldap, LdapConn, LdapResult, ResultEntry, Scope, SearchEntry};
+use ldap3::{Ldap, LdapResult, ResultEntry, Scope, SearchEntry};
 
 use reg::find_replace;
 
@@ -120,7 +120,7 @@ mod tests {
         let (conn, mut ldapcon) = LdapConnAsync::new(conf.host.as_str()).await?;
         ldap3::drive!(conn);
 
-        let b = ldapcon
+        let _b = ldapcon
             .simple_bind(&conf.binddn, &conf.bindpw)
             .await?
             .success()?;
