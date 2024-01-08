@@ -25,4 +25,4 @@ FROM gcr.io/distroless/static AS runtime
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/rustldap /usr/local/bin/app
 
 EXPOSE 8180 8280
-CMD ["/app/main"]
+CMD ["/usr/local/bin/app"]
