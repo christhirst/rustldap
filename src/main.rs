@@ -1,3 +1,4 @@
+mod base_64;
 mod config;
 mod ldapcrud;
 mod prettytab;

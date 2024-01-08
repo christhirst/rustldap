@@ -32,6 +32,7 @@ pub struct AppConfig {
 
     pub regex: String,
     pub replacewith: String,
+    pub showall: bool,
     pub checkmode: bool,
 }
 
@@ -46,6 +47,7 @@ impl Default for AppConfig {
             attr: "sn".to_string(),
             regex: "^ki".to_string(),
             replacewith: "ka".to_string(),
+            showall: true,
             checkmode: true,
         }
     }
