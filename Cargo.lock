@@ -599,6 +599,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ldapcore"
+version = "0.1.0"
+dependencies = [
+ "ldap3",
+ "serde",
+ "tokio",
+ "toml",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.151"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1013,6 +1023,7 @@ dependencies = [
  "axum",
  "base64",
  "ldap3",
+ "ldapcore",
  "mockall",
  "prettytable",
  "regex",

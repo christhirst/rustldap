@@ -1,0 +1,37 @@
+[[TN]]
+namme = "AA"
+
+[TN.CON]
+binddn = "cn=admin,dc=example,dc=org"
+bindpw = "admin"
+host = "ldap://0.0.0.0:389"
+base = "dc=example,dc=org"
+tls_verify = true
+starttls = true
+
+[TN.SYNC]
+filter = "(&(objectClass=*)(cn=*)(!(sn=*billy)))"
+attr = "sn"
+regex = "^ki"
+replacewith = "ka"
+showall = true
+checkmode = true
+
+[[TN]]
+namme = "BB"
+
+[TN.CON]
+binddn = "cn=admin,dc=example,dc=org"
+bindpw = "admin"
+host = "ldap://0.0.0.0:389"
+base = "dc=example,dc=org"
+tls_verify = true
+starttls = true
+
+[TN.SYNC]
+filter = "(&(objectClass=*)(cn=*)(!(sn=*billy)))"
+attr = "sn"
+regex = "^ki"
+replacewith = "ka"
+showall = true
+checkmode = true

@@ -1,8 +1,10 @@
 mod base_64;
 mod config;
+mod ldapcheck;
 mod ldapcrud;
 mod prettytab;
 mod reg;
+use ldapcore::parsconf;
 
 use std::fs;
 
