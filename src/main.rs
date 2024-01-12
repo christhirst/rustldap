@@ -96,7 +96,9 @@ async fn main() -> Result<(), CliError> {
 
     let file = "Config.toml";
     let conf = confload(file)?;
-    let (conn, mut ldap) = LdapConnAsync::new(conf.host.as_str()).await?;
+    let n = ldap3::LdapConnSettings::new();
+
+    let (conn, mut ldap) = LdapConnAsync::with_settings(n, conf.host.as_str()).await?;
     ldap3::drive!(conn);
 
     let rb = ldap.simple_bind(&conf.binddn, &conf.bindpw).await?;
