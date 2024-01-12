@@ -1,5 +1,3 @@
-[[TN]]
-name = "AA"
 binddn = "cn=admin,dc=example,dc=org"
 bindpw = "admin"
 host = "ldap://0.0.0.0:389"
@@ -10,9 +8,3 @@ regex = "^ki"
 replacewith = "ka"
 showall = true
 checkmode = true
-[[TN]]
-name = "BB"
-binddn = "cn=admin,dc=example,dc=org"
-bindpw = "admin"
-host = "ldap://0.0.0.0:389"
-base = "dc=example,dc=org"
