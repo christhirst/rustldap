@@ -49,7 +49,7 @@ pub struct Con {
     pub bindpw: String,
     pub host: String,
     pub base: String,
-    pub tls_verify: bool,
+    pub tlsverify: bool,
     pub starttls: bool,
 }
 
@@ -90,7 +90,7 @@ pub async fn createcon(condata: Con) -> Result<Ldap, LibError> {
     let settings = ldap3::LdapConnSettings::new();
     let dur = core::time::Duration::from_secs(3);
     let settings = settings.set_conn_timeout(dur);
-    let settings = settings.set_no_tls_verify(condata.tls_verify);
+    let settings = settings.set_no_tls_verify(condata.tlsverify);
     let settings = settings.set_starttls(condata.starttls);
 
     let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &condata.host).await?;
