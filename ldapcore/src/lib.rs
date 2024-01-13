@@ -1,13 +1,32 @@
-use std::{fs, io, path::Path};
+use std::{fmt, fs, io, path::Path};
 
 use ldap3::{Ldap, LdapConnAsync, LdapError};
-use serde::{de::value::Error, Deserialize, Serialize};
-#[derive(Debug)]
+use serde::{Deserialize, Serialize};
+use thiserror::Error;
+
+#[derive(Error, Debug)]
 pub enum LibError {
+    #[error("...")]
     IoError(io::Error),
+    #[error("...")]
     InvalidConfig(toml::de::Error),
+    #[error("...")]
     Ldap(LdapError),
+    #[error("data store disconnected")]
+    ConError,
 }
+
+/* impl fmt::Display for LibError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "MyStruct {{ field1: {}, field2: {} }}",
+            "".to_owned(),
+            "".to_owned()
+        )
+    }
+} */
+
 impl From<io::Error> for LibError {
     fn from(value: io::Error) -> Self {
         Self::IoError(value)
@@ -86,7 +105,7 @@ pub fn parsconf(filename: &str) -> Result<Root, LibError> {
     Ok(config)
 }
 //hostname: &str, tls_verify: bool, starttls: bool
-pub async fn createcon(condata: Con) -> Result<Ldap, LibError> {
+pub async fn createcon(condata: &Con) -> Result<Ldap, LibError> {
     let settings = ldap3::LdapConnSettings::new();
     let dur = core::time::Duration::from_secs(3);
     let settings = settings.set_conn_timeout(dur);
@@ -95,6 +114,8 @@ pub async fn createcon(condata: Con) -> Result<Ldap, LibError> {
 
     let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &condata.host).await?;
     ldap3::drive!(conn);
+    let c = ldap.simple_bind(&condata.binddn, &condata.bindpw).await?;
+
     Ok(ldap)
 }
 

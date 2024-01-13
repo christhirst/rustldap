@@ -1,25 +1,36 @@
-use std::io;
+use std::{error::Error, io};
 
 use ldapcore::{createcon, LibError, Tn};
 
 pub async fn checkcons(cons_config: Vec<Tn>) {
     for i in cons_config {
-        let con = createcon(i.con).await;
+        let con = createcon(&i.con).await;
         match con {
             Err(i) => match i {
-                LibError::IoError(e) => println!("Error: {:?}  1", e),
+                LibError::IoError(e) => println!(
+                    "Error: {:?}  1",
+                    e.source().unwrap().to_string().contains("NativeTLS")
+                ),
                 LibError::InvalidConfig(e) => println!("Error: {:?} 23", e),
-                LibError::Ldap(e) => println!("Error: {:?} 434", e),
+                LibError::Ldap(e) => {
+                    println!(
+                        "Error: {:?} - {:?} 434",
+                        e.source().unwrap().to_string().contains("certificate"),
+                        e
+                    )
+                }
 
                 _ => todo!(),
             },
-            Ok(x) => println!("{:?}", x),
+            Ok(mut x) => {
+                println!("{:?}", x);
+                x.simple_bind(&i.con.host, &i.con.bindpw);
+            }
         }
     }
 }
 
 #[cfg(test)]
-
 mod tests {
     use ldapcore::parsconf;
 
