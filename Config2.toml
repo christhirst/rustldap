@@ -6,8 +6,8 @@ binddn = "cn=admin,dc=example,dc=org"
 bindpw = "admin"
 host = "ldap://0.0.0.0:389"
 base = "dc=example,dc=org"
-tlsverify = false
-starttls = false
+tlsverify = true
+starttls = true
 
 [TN.SYNC]
 filter = "(&(objectClass=*)(cn=*)(!(sn=*billy)))"

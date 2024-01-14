@@ -7,11 +7,11 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum LibError {
     #[error("...")]
-    IoError(io::Error),
+    IoError(#[from] io::Error),
     #[error("...")]
-    InvalidConfig(toml::de::Error),
+    InvalidConfig(#[from] toml::de::Error),
     #[error("...")]
-    Ldap(LdapError),
+    Ldap(#[from] LdapError),
     #[error("data store disconnected")]
     ConError,
 }
@@ -27,23 +27,6 @@ pub enum LibError {
     }
 } */
 
-impl From<io::Error> for LibError {
-    fn from(value: io::Error) -> Self {
-        Self::IoError(value)
-    }
-}
-
-impl From<toml::de::Error> for LibError {
-    fn from(value: toml::de::Error) -> Self {
-        Self::InvalidConfig(value)
-    }
-}
-impl From<ldap3::LdapError> for LibError {
-    fn from(err: ldap3::LdapError) -> LibError {
-        LibError::Ldap(err)
-    }
-}
-
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Root {
@@ -54,7 +37,7 @@ pub struct Root {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Tn {
-    pub namme: String,
+    pub name: String,
     #[serde(rename = "CON")]
     pub con: Con,
     #[serde(rename = "SYNC")]
