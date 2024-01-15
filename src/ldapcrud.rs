@@ -1,4 +1,4 @@
-use std::{collections::HashSet, vec};
+use std::{collections::HashSet, hash::Hash, vec};
 
 use crate::{config::AppConfig, reg, CliError};
 
@@ -80,6 +80,43 @@ pub async fn ldapfindreplace(
         }
     }
     Ok(rs_vec)
+}
+
+#[derive(Debug)]
+pub struct entry {
+    dn: String,
+    attr: Vec<(String, HashSet<String>)>,
+}
+
+pub async fn ldapcreate(
+    ldapcon: &mut Ldap,
+    entries: &Vec<entry>,
+    checkmode: bool,
+) -> Result<Vec<LdapResult>, CliError> {
+    /* let entry = entry {
+        dn: "Example DN".to_string(),
+        attr: vec![
+            ("Attribute1".to_string(), {
+                let mut hs = HashSet::new();
+                hs.insert("Value1".to_string());
+                hs
+            }),
+            ("Attribute2".to_string(), {
+                let mut hs = HashSet::new();
+                hs.insert("Value2".to_string());
+                hs
+            }),
+        ],
+    }; */
+    let mut oo = vec![];
+
+    for i in entries {
+        let q = (&i.attr).to_owned();
+        let newattr = ldapcon.add(&i.dn, q).await?;
+        oo.push(newattr)
+    }
+
+    Ok(oo)
 }
 
 #[cfg(test)]

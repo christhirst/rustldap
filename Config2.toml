@@ -4,7 +4,7 @@ name = "AA"
 [TN.CON]
 binddn = "cn=admin,dc=example,dc=org"
 bindpw = "admin"
-host = "ldap://0.0.0.0:389"
+host = "ldap://172.23.187.43:3636"
 base = "dc=example,dc=org"
 tlsverify = true
 starttls = true
@@ -23,7 +23,7 @@ name = "BB"
 [TN.CON]
 binddn = "cn=admin,dc=example,dc=org"
 bindpw = "admin"
-host = "ldap://0.0.0.0:34254"
+host = "ldap://172.23.187.43:3636"
 base = "dc=example,dc=org"
 tlsverify = false
 starttls = false
