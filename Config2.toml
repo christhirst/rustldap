@@ -1,5 +1,5 @@
 [[TN]]
-namme = "AA"
+name = "AA"
 
 [TN.CON]
 binddn = "cn=admin,dc=example,dc=org"
@@ -18,12 +18,12 @@ showall = true
 checkmode = true
 
 [[TN]]
-namme = "BB"
+name = "BB"
 
 [TN.CON]
 binddn = "cn=admin,dc=example,dc=org"
 bindpw = "admin"
-host = "ldap://0.0.0.0:389"
+host = "ldap://0.0.0.0:34254"
 base = "dc=example,dc=org"
 tlsverify = false
 starttls = false

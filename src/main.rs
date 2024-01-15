@@ -5,8 +5,9 @@ mod ldapcrud;
 mod prettytab;
 mod reg;
 use ldapcore::parsconf;
-
 use std::fs;
+use tracing::{error, info, Level};
+use tracing_subscriber::FmtSubscriber;
 
 use serde_json::{json, Value};
 
@@ -87,6 +88,11 @@ async fn json(
 
 #[tokio::main]
 async fn main() -> Result<(), CliError> {
+    let subscriber = FmtSubscriber::builder()
+        .with_max_level(Level::TRACE)
+        .finish();
+    tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
+
     let path = ".";
     if let Ok(entries) = fs::read_dir(path) {
         for entry in entries {

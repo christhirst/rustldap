@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use std::{collections::HashMap, error::Error, io, time::SystemTime};
+use tracing::warn;
 
 use ldapcore::{createcon, LibError, Tn};
 
@@ -33,7 +34,7 @@ pub async fn checkcons(cons_config: Vec<Tn>) -> Result<HashMap<String, check>, (
                     if s {
                         tn.problemtsl += 1;
                     } else {
-                        println!("Error: {:?}  1", e);
+                        warn!("Error: {}  1", e);
                     }
                 }
                 LibError::InvalidConfig(e) => println!("Error: {:?} 23", e),
@@ -60,6 +61,9 @@ pub async fn checkcons(cons_config: Vec<Tn>) -> Result<HashMap<String, check>, (
 
 #[cfg(test)]
 mod tests {
+
+    use std::vec;
+
     use ldapcore::parsconf;
 
     use super::*;
