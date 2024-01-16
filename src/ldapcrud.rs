@@ -91,24 +91,8 @@ pub struct entry {
 pub async fn ldapcreate(
     ldapcon: &mut Ldap,
     entries: &Vec<entry>,
-    checkmode: bool,
 ) -> Result<Vec<LdapResult>, CliError> {
-    /* let entry = entry {
-        dn: "Example DN".to_string(),
-        attr: vec![
-            ("Attribute1".to_string(), {
-                let mut hs = HashSet::new();
-                hs.insert("Value1".to_string());
-                hs
-            }),
-            ("Attribute2".to_string(), {
-                let mut hs = HashSet::new();
-                hs.insert("Value2".to_string());
-                hs
-            }),
-        ],
-    }; */
-    let mut oo = vec![];
+    let mut oo: Vec<LdapResult> = vec![];
 
     for i in entries {
         let q = (&i.attr).to_owned();
@@ -170,3 +154,19 @@ mod tests {
         Ok(())
     }
 }
+
+/* let entry = entry {
+    dn: "Example DN".to_string(),
+    attr: vec![
+        ("Attribute1".to_string(), {
+            let mut hs = HashSet::new();
+            hs.insert("Value1".to_string());
+            hs
+        }),
+        ("Attribute2".to_string(), {
+            let mut hs = HashSet::new();
+            hs.insert("Value2".to_string());
+            hs
+        }),
+    ],
+}; */

@@ -127,6 +127,7 @@ async fn main() -> Result<(), CliError> {
 
     let router = Router::new()
         .route("/json", get(json))
+        .route("/create", get(json))
         .layer(Extension(ldap))
         .layer(Extension(conf));
 

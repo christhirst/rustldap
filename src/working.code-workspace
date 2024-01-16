@@ -4,7 +4,7 @@
       "path": ".."
     },
     {
-      "path": "../../ldapchecker"
+      "path": "../../leptos-tutorial"
     }
   ],
   "settings": {}
