@@ -5,7 +5,12 @@
     },
     {
       "path": "../../leptos-tutorial"
+    },
+    {
+      "path": "../../backend-test"
     }
   ],
-  "settings": {}
+  "settings": {
+    "rust-analyzer.linkedProjects": ["./Cargo.toml"]
+  }
 }

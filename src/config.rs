@@ -77,13 +77,21 @@ pub fn load_or_initialize(filename: &str) -> Result<AppConfig, ConfigError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use assert_fs::prelude::*;
+    use assert_fs::*;
     #[test]
-    fn config_parse() {
-        let filename = "Config.toml";
-        let conf = load_or_initialize(filename).unwrap();
+    fn config_parse() -> Result<(), Box<dyn std::error::Error>> {
+        let filename1 = "Config_test.toml";
+        let file = assert_fs::NamedTempFile::new("sample.txt")?;
+        file.write_str("A test\nActual content\nMore content\nAnother test")?;
+        println!("{:?}", file.path());
+        //let filename = "Config.toml";
+        let conf = load_or_initialize(filename1).unwrap();
         //findReplace(hay, r"^ki");
         //let result = 2 + 2;
         let o = AppConfig::default();
+        println!("{:?}", conf);
         assert_eq!(conf, o);
+        Ok(())
     }
 }

@@ -1,0 +1,10 @@
+binddn = "cn=admin,dc=example,dc=org"
+bindpw = "admin"
+host = "ldap://0.0.0.0:389"
+base = "dc=example,dc=org"
+filter = "(&(objectClass=*)(cn=*)(!(sn=*billy)))"
+attr = "sn"
+regex = "^ki"
+replacewith = "ka"
+showall = true
+checkmode = true
